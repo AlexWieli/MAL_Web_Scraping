@@ -5,7 +5,7 @@
 from urllib import request
 from urllib.parse import quote
 from bs4 import BeautifulSoup as BS
-import re
+# import re
 import pandas as pd
 
 ################################################################################
@@ -45,8 +45,8 @@ while len(anime_links) < link_limit:
     html = request.urlopen(next_page_link)
     bs = BS(html.read(), 'html.parser')
 
-# for link in anime_links:
-#    print(link)
+for link in anime_links:
+    print(link)
 
 ################################################################################
 # This part scraps anime data
@@ -56,8 +56,8 @@ d = pd.DataFrame({'title':[], 'type':[], 'episodes':[], 'status':[], 'aired':[],
     
 for link in anime_links:
     url = quote(link, safe=':/')
-    html=request.urlopen(url)
-    bs1=BS(html.read(), 'html.parser')
+    html = request.urlopen(url)
+    bs1 = BS(html.read(), 'html.parser')
     
     # Chosing parameters to extract 
     
@@ -135,4 +135,4 @@ for link in anime_links:
     d = d.append(anime, ignore_index = True)
 
 print(d)
-d.to_csv('anime.csv')
+#d.to_csv('anime.csv')
