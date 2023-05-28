@@ -48,7 +48,7 @@ for link in anime_links:
     print(link)
 
 ################################################################################
-# This part scraps painters
+# This part scraps anime data
 ################################################################################
 d = pd.DataFrame({'title':[], 'type':[], 'episodes':[], 'status':[], 'aired':[], 'studios':[], 'source':[], 'genres':[], 'theme':[], 'demo':[], 'duration':[], 'rating':[], 'score':[], 'ranked':[], 'popularity':[], 'members':[], 'fav':[]})
     
@@ -84,45 +84,4 @@ for link in anime_links:
     d = d.append(anime, ignore_index = True)
 
 print(d)
-
-
-d = pd.DataFrame({'name':[], 'birth':[], 'death':[], 'nationality':[]})
-
-for painter_link in painter_links[:100]:
-    print(painter_link)
-
-    html = request.urlopen(painter_link)
-    bs = BS(html.read(), 'html.parser')
-    
-    try:
-        name = bs.find('h1').text
-    except:
-        name = ''
-    
-    try:
-        birth = bs.find('th',string = 'Born').next_sibling.text
-        birth = re.findall('[0-9]+\s+[A-Za-z]+\s+[0-9]+', birth)[0]
-    except:
-        birth = ''
-    
-    try:
-        death = bs.find('th',string = 'Died').next_sibling.text
-        death = re.findall('[0-9]+\s+[A-Za-z]+\s+[0-9]+', death)[0]
-    except:
-        death = ''
-    
-    try:
-        nationality = bs.find('th',string = 'Nationality').next_sibling.text
-    except:
-        nationality = ''
-    
-    painter = {'name':name, 'birth':birth, 'death':death, 'nationality':nationality}
-    
-    d = d.append(painter, ignore_index = True)
-    print(d)
-
-################################################################################
-# This part saves data to csv.
-################################################################################
-d.to_csv('painters.csv')
-
+#d.to_csv('anime.csv')
