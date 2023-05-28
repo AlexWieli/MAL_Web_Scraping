@@ -32,7 +32,7 @@ def scrape_links(url):
 anime_links.extend(scrape_links(top_url))
 
 # Manual limit - increments of 50 are checked
-link_limit = 200
+link_limit = 100
 
 while len(anime_links) < link_limit:
     next_page_link = None
@@ -45,8 +45,8 @@ while len(anime_links) < link_limit:
     html = request.urlopen(next_page_link)
     bs = BS(html.read(), 'html.parser')
 
-for link in anime_links:
-    print(link)
+#for link in anime_links:
+#    print(link)
 
 ################################################################################
 # This part scraps anime data
@@ -136,7 +136,7 @@ for link in anime_links:
     except AttributeError:
         fav = ''
     anime = {'title':title, 'type':type, 'episodes':episodes, 'status':status, 'aired':aired, 'studios':studios, 'source':source, 'genres':genres, 'theme':theme, 'demo':demo, 'duration':duration, 'rating':rating, 'score':score, 'ranked':ranked, 'popularity':popularity, 'members':members, 'fav':fav}
-    d = d.append(anime, ignore_index = True)
+    d = pd.concat([d, pd.DataFrame(anime, index=[0])], ignore_index=True)
 
 print(d)
-#d.to_csv('anime.csv')
+d.to_csv('anime_BS.csv')
