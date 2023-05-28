@@ -11,8 +11,11 @@ import pandas as pd
 # This part prepares preliminary links - links for lists of links :)
 ################################################################################
 url = 'https://myanimelist.net/' 
-html = request.urlopen(url)
+html = re.urlopen(url)
 bs = BS(html.read(), 'html.parser')
+
+tag=bs.find('div', {'class':'footer-ranking'}).div.div.h3.a['href']
+#^ Kuba's edit
 
 tags = bs.find_all('a', {'title':re.compile('List of painters by name beginning with.*')})
 
