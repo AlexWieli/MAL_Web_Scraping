@@ -51,12 +51,16 @@ for link in anime_links:
 ################################################################################
 # This part scraps anime data
 ################################################################################
+
 d = pd.DataFrame({'title':[], 'type':[], 'episodes':[], 'status':[], 'aired':[], 'studios':[], 'source':[], 'genres':[], 'theme':[], 'demo':[], 'duration':[], 'rating':[], 'score':[], 'ranked':[], 'popularity':[], 'members':[], 'fav':[]})
     
 for link in anime_links:
     url = quote(link, safe=':/')
     html=request.urlopen(url)
     bs1=BS(html.read(), 'html.parser')
+    
+    # Chosing parameters to extract 
+    
     title = bs1.find('h1', {'class':'title-name h1_bold_none'}).get_text(strip=True)
 
     try:
@@ -123,9 +127,12 @@ for link in anime_links:
         fav = bs1.find('span', string='Favorites:').parent.get_text(strip=True).replace('Favorites:', '')
     except AttributeError:
         fav = ''
+    
+    # Adjusting the order of data
+    
     anime = {'title':title, 'type':type, 'episodes':episodes, 'status':status, 'aired':aired, 'studios':studios, 'source':source, 'genres':genres, 'theme':theme, 'demo':demo, 'duration':duration, 'rating':rating, 'score':score, 'ranked':ranked, 'popularity':popularity, 'members':members, 'fav':fav}
     
     d = d.append(anime, ignore_index = True)
 
 print(d)
-#d.to_csv('anime.csv')
+d.to_csv('anime.csv')
