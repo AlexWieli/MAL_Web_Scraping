@@ -54,13 +54,12 @@ for link in anime_links:
 
 d = pd.DataFrame({'title':[], 'type':[], 'episodes':[], 'status':[], 'aired':[], 'studios':[], 'source':[], 'genres':[], 'theme':[], 'demo':[], 'duration':[], 'rating':[], 'score':[], 'ranked':[], 'popularity':[], 'members':[], 'fav':[]})
     
+
 for link in anime_links:
     url = quote(link, safe=':/')
-    html = request.urlopen(url)
-    bs1 = BS(html.read(), 'html.parser')
-    
-    # Chosing parameters to extract 
-    
+    html=request.urlopen(url)
+    bs1=BS(html.read(), 'html.parser')
+    #print("link: ", link)
     title = bs1.find('h1', {'class':'title-name h1_bold_none'}).get_text(strip=True)
 
     try:
@@ -71,65 +70,87 @@ for link in anime_links:
         episodes = bs1.find('span', string='Episodes:').parent.get_text(strip=True).replace('Episodes:', '')
     except AttributeError:
         episodes = ''
+
     try:
         status = bs1.find('span', string='Status:').parent.get_text(strip=True).replace('Status:', '')
     except AttributeError:
         status = ''
+
     try:
         aired = bs1.find('span', string='Aired:').parent.get_text(strip=True).replace('Aired:', '')
     except AttributeError:
         aired = ''
+
     try:
         studios = bs1.find('span', string='Studios:').parent.get_text(strip=True).replace('Studios:', '')
     except AttributeError:
         studios = ''
+
     try:
         source = bs1.find('span', string='Source:').parent.get_text(strip=True).replace('Source:', '')
     except AttributeError:
         source = ''
+
     try:
-        genres = bs1.find('span', string='Genres:').parent.get_text(strip=True).replace('Genres:', '')
+        genres = ', '.join([a.get_text(strip=True) for a in bs1.find('span', string='Genres:').parent.find_all('a')])
     except AttributeError:
         genres = ''
     try:
-        theme = bs1.find('span', string='Theme:').parent.get_text(strip=True).replace('Theme:', '')
+        theme = ', '.join([a.get_text(strip=True) for a in bs1.find('span', string='Theme:').parent.find_all('a')])
     except AttributeError:
         theme = ''
+
     try:
-        demo = bs1.find('span', string='Demographic:').parent.get_text(strip=True).replace('Demographic:', '')
+        demo = ', '.join([a.get_text(strip=True) for a in bs1.find('span', string='Demographic:').parent.find_all('a')])
     except AttributeError:
         demo = ''
+
     try:
         duration = bs1.find('span', string='Duration:').parent.get_text(strip=True).replace('Duration:', '')
     except AttributeError:
         duration = ''
+
     try:
         rating = bs1.find('span', string='Rating:').parent.get_text(strip=True).replace('Rating:', '')
     except AttributeError:
         rating = ''
+
     try:
-        score = bs1.find('span', string='Score:').parent.get_text(strip=True).replace('Score:', '')
+        score = bs1.find('span', string='Score:').find_next_sibling().get_text(strip=True)
     except AttributeError:
         score = ''
+
     try:
-        ranked = bs1.find('span', string='Ranked:').parent.get_text(strip=True).replace('Ranked:', '')
+        ranked_text = bs1.find('span', string='Ranked:').parent.get_text(strip=True).replace('Ranked:', '')
+        ranked_number = re.search(r'#(\d+)', ranked_text)
+        if ranked_number:
+            ranked = ranked_number.group(1)
+            ranked = ranked[:-2]
+        else:
+            ranked = ''
     except AttributeError:
         ranked = ''
+
     try:
-        popularity = bs1.find('span', string='Popularity:').parent.get_text(strip=True).replace('Popularity:', '')
+        popularity_text =  bs1.find('span', string='Popularity:').parent.get_text(strip=True).replace('Popularity:', '')
+        popularity_number = re.search(r'#(\d+)', popularity_text)
+        if popularity_number:
+            popularity = popularity_number.group(1)
+        else:
+            popularity = ''
     except AttributeError:
         popularity = ''
+
     try:
         members = bs1.find('span', string='Members:').parent.get_text(strip=True).replace('Members:', '')
     except AttributeError:
         members = ''
+
     try:
         fav = bs1.find('span', string='Favorites:').parent.get_text(strip=True).replace('Favorites:', '')
     except AttributeError:
         fav = ''
-    
-    # Adjusting the order of data
-    
+
     anime = {'title':title, 'type':type, 'episodes':episodes, 'status':status, 'aired':aired, 'studios':studios, 'source':source, 'genres':genres, 'theme':theme, 'demo':demo, 'duration':duration, 'rating':rating, 'score':score, 'ranked':ranked, 'popularity':popularity, 'members':members, 'fav':fav}
     
     d = d.append(anime, ignore_index = True)
