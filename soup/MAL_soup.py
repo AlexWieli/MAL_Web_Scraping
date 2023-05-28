@@ -3,6 +3,7 @@
 ################################################################################
 
 from urllib import request
+from urllib.parse import quote
 from bs4 import BeautifulSoup as BS
 import re
 import pandas as pd
