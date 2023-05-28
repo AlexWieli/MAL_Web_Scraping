@@ -8,7 +8,7 @@ import re
 import pandas as pd
 
 ################################################################################
-# This part prepares preliminary links - links for lists of links :)
+# This part prepares links to current top anime
 ################################################################################
 url = 'https://myanimelist.net/' 
 html = request.urlopen(url)
@@ -23,6 +23,7 @@ tags = bs.find_all(class_='hoverinfo_trigger fl-l ml12 mr8')
 
 anime_links = ['https://myanimelist.net' + tag['href'] for tag in tags]
 
+# debugging print statement
 for link in anime_links:
     print(link)
 
