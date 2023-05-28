@@ -10,20 +10,37 @@ import pandas as pd
 ################################################################################
 # This part prepares links to current top anime
 ################################################################################
-url = 'https://myanimelist.net/' 
-html = request.urlopen(url)
+
+base_url = 'https://myanimelist.net/'
+html = request.urlopen(base_url)
 bs = BS(html.read(), 'html.parser')
 
-top_url = bs.find('div', {'class':'footer-ranking'}).div.div.h3.a['href']
-
+top_url = bs.find('div', {'class': 'footer-ranking'}).div.div.h3.a['href']
 html = request.urlopen(top_url)
 bs = BS(html.read(), 'html.parser')
 
-tags = bs.find_all(class_='hoverinfo_trigger fl-l ml12 mr8')
+anime_links = []
 
-anime_links = ['https://myanimelist.net' + tag['href'] for tag in tags]
+def scrape_links(url):
+    html = request.urlopen(url)
+    bs = BS(html.read(), 'html.parser')
+    tags = bs.find_all(class_='hoverinfo_trigger fl-l ml12 mr8')
+    links = [tag['href'] for tag in tags]
+    return links
 
-# debugging print statement
+anime_links.extend(scrape_links(top_url))
+
+while True:
+    next_page_link = None
+    next_button = bs.find(class_='link-blue-box next')
+    if next_button:
+        next_page_link = top_url + next_button['href']
+        anime_links.extend(scrape_links(next_page_link))
+    else:
+        break
+    html = request.urlopen(next_page_link)
+    bs = BS(html.read(), 'html.parser')
+
 for link in anime_links:
     print(link)
 
