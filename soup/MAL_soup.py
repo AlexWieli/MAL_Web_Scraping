@@ -11,36 +11,20 @@ import pandas as pd
 # This part prepares preliminary links - links for lists of links :)
 ################################################################################
 url = 'https://myanimelist.net/' 
-html = re.urlopen(url)
+html = request.urlopen(url)
 bs = BS(html.read(), 'html.parser')
 
-tag=bs.find('div', {'class':'footer-ranking'}).div.div.h3.a['href']
-#^ Kuba's edit
+top_url = bs.find('div', {'class':'footer-ranking'}).div.div.h3.a['href']
 
-tags = bs.find_all('a', {'title':re.compile('List of painters by name beginning with.*')})
+html = request.urlopen(top_url)
+bs = BS(html.read(), 'html.parser')
 
-links = ['http://en.wikipedia.org' + tag['href'] for tag in tags]
+tags = bs.find_all(class_='hoverinfo_trigger fl-l ml12 mr8')
 
-################################################################################
-# This part prepares real painter links
-################################################################################
-painter_links = []
+anime_links = ['https://myanimelist.net' + tag['href'] for tag in tags]
 
-for link in links:
+for link in anime_links:
     print(link)
-    html = request.urlopen(link)
-    bs = BS(html.read(), 'html.parser')
-    
-    tags = bs.find_all('ul')[13].find_all('li')
-
-    link_temp_list = []
-    for tag in tags:
-        try:
-            link_temp_list.append('http://en.wikipedia.org' + tag.a['href'])
-        except:
-            0 
-
-    painter_links.extend(link_temp_list)
 
 ################################################################################
 # This part scraps painters
