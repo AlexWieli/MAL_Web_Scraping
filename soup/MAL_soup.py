@@ -57,29 +57,72 @@ for link in anime_links:
     url = quote(link, safe=':/')
     html=request.urlopen(url)
     bs1=BS(html.read(), 'html.parser')
-    print("link: ", link)
     title = bs1.find('h1', {'class':'title-name h1_bold_none'}).get_text(strip=True)
 
-    type = bs1.find('span', string='Type:').find_next_sibling().get_text(strip=True)
-    episodes = bs1.find('span', string='Episodes:').parent.get_text(strip=True).replace('Episodes:', '')
-    status = bs1.find('span', string='Status:').parent.get_text(strip=True).replace('Status:', '')
-    aired = bs1.find('span', string='Aired:').parent.get_text(strip=True).replace('Aired:', '')
-    studios = bs1.find('span', string='Studios:').parent.get_text(strip=True).replace('Studios:', '')
-    source = bs1.find('span', string='Source:').parent.get_text(strip=True).replace('Source:', '')
-    genres = bs1.find('span', string='Genres:').parent.get_text(strip=True).replace('Genres:', '')
-    theme = bs1.find('span', string='Theme:').parent.get_text(strip=True).replace('Theme:', '')
-    demo = bs1.find('span', string='Demographic:').parent.get_text(strip=True).replace('Demographic:', '')
-    duration = bs1.find('span', string='Duration:').parent.get_text(strip=True).replace('Duration:', '')
-    rating = bs1.find('span', string='Rating:').parent.get_text(strip=True).replace('Rating:', '')
-
-    score = bs1.find('span', string='Score:').parent.get_text(strip=True).replace('Score:', '')
-    ranked = bs1.find('span', string='Ranked:').parent.get_text(strip=True).replace('Ranked:', '')
-    popularity = bs1.find('span', string='Popularity:').parent.get_text(strip=True).replace('Popularity:', '')
-    members = bs1.find('span', string='Members:').parent.get_text(strip=True).replace('Members:', '')
-    fav = bs1.find('span', string='Favorites:').parent.get_text(strip=True).replace('Favorites:', '')
-
-    #anime = {'title':title, 'type':type, 'episodes':episodes}
-
+    try:
+        type = bs1.find('span', string='Type:').find_next_sibling().get_text(strip=True)
+    except:
+        type = ''
+    try:
+        episodes = bs1.find('span', string='Episodes:').parent.get_text(strip=True).replace('Episodes:', '')
+    except AttributeError:
+        episodes = ''
+    try:
+        status = bs1.find('span', string='Status:').parent.get_text(strip=True).replace('Status:', '')
+    except AttributeError:
+        status = ''
+    try:
+        aired = bs1.find('span', string='Aired:').parent.get_text(strip=True).replace('Aired:', '')
+    except AttributeError:
+        aired = ''
+    try:
+        studios = bs1.find('span', string='Studios:').parent.get_text(strip=True).replace('Studios:', '')
+    except AttributeError:
+        studios = ''
+    try:
+        source = bs1.find('span', string='Source:').parent.get_text(strip=True).replace('Source:', '')
+    except AttributeError:
+        source = ''
+    try:
+        genres = bs1.find('span', string='Genres:').parent.get_text(strip=True).replace('Genres:', '')
+    except AttributeError:
+        genres = ''
+    try:
+        theme = bs1.find('span', string='Theme:').parent.get_text(strip=True).replace('Theme:', '')
+    except AttributeError:
+        theme = ''
+    try:
+        demo = bs1.find('span', string='Demographic:').parent.get_text(strip=True).replace('Demographic:', '')
+    except AttributeError:
+        demo = ''
+    try:
+        duration = bs1.find('span', string='Duration:').parent.get_text(strip=True).replace('Duration:', '')
+    except AttributeError:
+        duration = ''
+    try:
+        rating = bs1.find('span', string='Rating:').parent.get_text(strip=True).replace('Rating:', '')
+    except AttributeError:
+        rating = ''
+    try:
+        score = bs1.find('span', string='Score:').parent.get_text(strip=True).replace('Score:', '')
+    except AttributeError:
+        score = ''
+    try:
+        ranked = bs1.find('span', string='Ranked:').parent.get_text(strip=True).replace('Ranked:', '')
+    except AttributeError:
+        ranked = ''
+    try:
+        popularity = bs1.find('span', string='Popularity:').parent.get_text(strip=True).replace('Popularity:', '')
+    except AttributeError:
+        popularity = ''
+    try:
+        members = bs1.find('span', string='Members:').parent.get_text(strip=True).replace('Members:', '')
+    except AttributeError:
+        members = ''
+    try:
+        fav = bs1.find('span', string='Favorites:').parent.get_text(strip=True).replace('Favorites:', '')
+    except AttributeError:
+        fav = ''
     anime = {'title':title, 'type':type, 'episodes':episodes, 'status':status, 'aired':aired, 'studios':studios, 'source':source, 'genres':genres, 'theme':theme, 'demo':demo, 'duration':duration, 'rating':rating, 'score':score, 'ranked':ranked, 'popularity':popularity, 'members':members, 'fav':fav}
     
     d = d.append(anime, ignore_index = True)
