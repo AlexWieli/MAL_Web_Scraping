@@ -45,8 +45,8 @@ while len(anime_links) < link_limit:
     html = request.urlopen(next_page_link)
     bs = BS(html.read(), 'html.parser')
 
-for link in anime_links:
-    print(link)
+# for link in anime_links:
+#    print(link)
 
 ################################################################################
 # This part scraps anime data
