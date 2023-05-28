@@ -30,7 +30,10 @@ def scrape_links(url):
 
 anime_links.extend(scrape_links(top_url))
 
-while True:
+# Manual limit - increments of 50 are checked
+link_limit = 200
+
+while len(anime_links) < link_limit:
     next_page_link = None
     next_button = bs.find(class_='link-blue-box next')
     if next_button:
