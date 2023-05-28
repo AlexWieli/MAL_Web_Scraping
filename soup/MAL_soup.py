@@ -1,7 +1,7 @@
 ################################################################################
 # Scraping Project - My Anime List | Aleksander Wieliński 420272 & Jakub Gazda 419272
 ################################################################################
-# This page exctracts links from wikipedia page in a simplistic way:
+
 from urllib import request
 from bs4 import BeautifulSoup as BS
 import re
