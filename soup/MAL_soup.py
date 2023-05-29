@@ -84,11 +84,11 @@ for link in anime_links:
     except AttributeError:
         source = ''
     try:
-        genres = ', '.join([a.get_text(strip=True) for a in bs1.find('span', string='Genres:').parent.find_all('a')])
+        genres = ', '.join([a.get_text(strip=True) for a in bs1.find('span', string=re.compile(r'Genre(s)?:$')).parent.find_all('a')])
     except AttributeError:
         genres = ''
     try:
-        theme = ', '.join([a.get_text(strip=True) for a in bs1.find('span', string='Theme:').parent.find_all('a')])
+        theme = ', '.join([a.get_text(strip=True) for a in bs1.find('span', string=re.compile(r'Theme(s)?:$')).parent.find_all('a')])
     except AttributeError:
         theme = ''
     try:
@@ -111,20 +111,14 @@ for link in anime_links:
     try:
         ranked_text = bs1.find('span', string='Ranked:').parent.get_text(strip=True).replace('Ranked:', '')
         ranked_number = re.search(r'#(\d+)', ranked_text)
-        if ranked_number:
-            ranked = ranked_number.group(1)
-            ranked = ranked[:-2]
-        else:
-            ranked = ''
+        ranked = ranked_number.group(1)
+        ranked = ranked[:-2]
     except AttributeError:
         ranked = ''
     try:
         popularity_text =  bs1.find('span', string='Popularity:').parent.get_text(strip=True).replace('Popularity:', '')
         popularity_number = re.search(r'#(\d+)', popularity_text)
-        if popularity_number:
-            popularity = popularity_number.group(1)
-        else:
-            popularity = ''
+        popularity = popularity_number.group(1)
     except AttributeError:
         popularity = ''
     try:
@@ -138,5 +132,5 @@ for link in anime_links:
     anime = {'title':title, 'type':type, 'episodes':episodes, 'status':status, 'aired':aired, 'studios':studios, 'source':source, 'genres':genres, 'theme':theme, 'demo':demo, 'duration':duration, 'rating':rating, 'score':score, 'ranked':ranked, 'popularity':popularity, 'members':members, 'fav':fav}
     d = pd.concat([d, pd.DataFrame(anime, index=[0])], ignore_index=True)
 
-print(d)
+#print(d)
 d.to_csv('anime_BS.csv')
