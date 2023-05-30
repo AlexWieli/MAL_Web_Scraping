@@ -62,14 +62,14 @@ d = pd.DataFrame(
      'fav': []})
 
 def scrape_data(element):
-    time.sleep(1)
+    time.sleep(0.2)
     return element.text.strip() if element else ''
 
 for link in anime_links:
     url = quote(link, safe=':/')
     driver.get(url)
 
-    # time.sleep(5) # adjust the waiting time accordingly
+    time.sleep(0.2) # adjust the waiting time accordingly
 
     title = scrape_data(driver.find_element(By.XPATH, "//h1[@class='title-name h1_bold_none']"))
     type = scrape_data(driver.find_element(By.XPATH, "//span[text()='Type:']/following-sibling::a"))
@@ -78,8 +78,8 @@ for link in anime_links:
     aired = scrape_data(driver.find_element(By.XPATH, "//span[text()='Aired:']/parent::*"))
     studios = scrape_data(driver.find_element(By.XPATH, "//span[text()='Studios:']/parent::*"))
     source = scrape_data(driver.find_element(By.XPATH, "//span[text()='Source:']/parent::*"))
-    genres = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[text()='Genres:']/parent::*/a"))
-    theme = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[text()='Theme:']/parent::*/a"))
+    genres = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[contains(text(), 'Genre') or contains(text(), 'Genres')]/parent::*/a"))
+    themes = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[text()='Theme:']/parent::*/a"))
     demo = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[text()='Demographic:']/parent::*/a"))
     duration = scrape_data(driver.find_element(By.XPATH, "//span[text()='Duration:']/parent::*"))
     rating = scrape_data(driver.find_element(By.XPATH, "//span[text()='Rating:']/parent::*"))
@@ -93,7 +93,7 @@ for link in anime_links:
 
 
     anime = {'title': title, 'type': type, 'episodes': episodes, 'status': status, 'aired': aired, 'studios': studios,
-             'source': source, 'genres': genres, 'theme': theme, 'demo': demo, 'duration': duration, 'rating': rating,
+             'source': source, 'genres': genres, 'theme': themes, 'demo': demo, 'duration': duration, 'rating': rating,
              'score': score, 'ranked': ranked, 'popularity': popularity, 'members': members, 'fav': fav}
     d = pd.concat([d, pd.DataFrame(anime, index=[0])], ignore_index=True)
 
