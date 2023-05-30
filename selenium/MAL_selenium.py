@@ -5,8 +5,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import time
 
 # Configure Firefox options
 options = Options()
@@ -39,7 +39,7 @@ def scrape_links(url):
 anime_links.extend(scrape_links(top_url))
 
 # Manual limit - increments of 50 are checked
-link_limit = 100
+link_limit = 50
 
 while len(anime_links) < link_limit:
     next_button = driver.find_element(By.CLASS_NAME, 'link-blue-box.next')
@@ -51,3 +51,53 @@ while len(anime_links) < link_limit:
 
 for link in anime_links:
     print(link)
+
+################################################################################
+# This part scrapes anime data
+################################################################################
+
+d = pd.DataFrame(
+    {'title': [], 'type': [], 'episodes': [], 'status': [], 'aired': [], 'studios': [], 'source': [], 'genres': [],
+     'theme': [], 'demo': [], 'duration': [], 'rating': [], 'score': [], 'ranked': [], 'popularity': [], 'members': [],
+     'fav': []})
+
+def get_element_text(element):
+    time.sleep(1)
+    return element.text.strip() if element else ''
+
+for link in anime_links:
+    url = quote(link, safe=':/')
+    driver.get(url)
+
+    # time.sleep(5) # adjust the waiting time accordingly
+
+    title = get_element_text(driver.find_element(By.XPATH, "//h1[@class='title-name h1_bold_none']"))
+    type = get_element_text(driver.find_element(By.XPATH, "//span[text()='Type:']/following-sibling::a"))
+    episodes = get_element_text(driver.find_element(By.XPATH, "//span[text()='Episodes:']/parent::*"))
+    status = get_element_text(driver.find_element(By.XPATH, "//span[text()='Status:']/parent::*"))
+    aired = get_element_text(driver.find_element(By.XPATH, "//span[text()='Aired:']/parent::*"))
+    studios = get_element_text(driver.find_element(By.XPATH, "//span[text()='Studios:']/parent::*"))
+    source = get_element_text(driver.find_element(By.XPATH, "//span[text()='Source:']/parent::*"))
+    genres = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[text()='Genres:']/parent::*/a"))
+    theme = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[text()='Theme:']/parent::*/a"))
+    demo = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[text()='Demographic:']/parent::*/a"))
+    duration = get_element_text(driver.find_element(By.XPATH, "//span[text()='Duration:']/parent::*"))
+    rating = get_element_text(driver.find_element(By.XPATH, "//span[text()='Rating:']/parent::*"))
+    score = get_element_text(driver.find_element(By.XPATH, "//span[text()='Score:']/following-sibling::span"))
+    ranked = re.search(r'#(\d+)', get_element_text(driver.find_element(By.XPATH, "//span[text()='Ranked:']/parent::*")))
+    ranked = ranked.group(1)[:-2] if ranked else ''
+    popularity = re.search(r'#(\d+)', get_element_text(driver.find_element(By.XPATH, "//span[text()='Popularity:']/parent::*")))
+    popularity = popularity.group(1) if popularity else ''
+    members = get_element_text(driver.find_element(By.XPATH, "//span[text()='Members:']/parent::*"))
+    fav = get_element_text(driver.find_element(By.XPATH, "//span[text()='Favorites:']/parent::*"))
+
+
+    anime = {'title': title, 'type': type, 'episodes': episodes, 'status': status, 'aired': aired, 'studios': studios,
+             'source': source, 'genres': genres, 'theme': theme, 'demo': demo, 'duration': duration, 'rating': rating,
+             'score': score, 'ranked': ranked, 'popularity': popularity, 'members': members, 'fav': fav}
+    d = pd.concat([d, pd.DataFrame(anime, index=[0])], ignore_index=True)
+
+driver.quit()
+
+print(d)
+d.to_csv('anime_Selenium.csv')
