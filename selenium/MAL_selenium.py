@@ -61,7 +61,7 @@ d = pd.DataFrame(
      'theme': [], 'demo': [], 'duration': [], 'rating': [], 'score': [], 'ranked': [], 'popularity': [], 'members': [],
      'fav': []})
 
-def get_element_text(element):
+def scrape_data(element):
     time.sleep(1)
     return element.text.strip() if element else ''
 
@@ -71,25 +71,25 @@ for link in anime_links:
 
     # time.sleep(5) # adjust the waiting time accordingly
 
-    title = get_element_text(driver.find_element(By.XPATH, "//h1[@class='title-name h1_bold_none']"))
-    type = get_element_text(driver.find_element(By.XPATH, "//span[text()='Type:']/following-sibling::a"))
-    episodes = get_element_text(driver.find_element(By.XPATH, "//span[text()='Episodes:']/parent::*"))
-    status = get_element_text(driver.find_element(By.XPATH, "//span[text()='Status:']/parent::*"))
-    aired = get_element_text(driver.find_element(By.XPATH, "//span[text()='Aired:']/parent::*"))
-    studios = get_element_text(driver.find_element(By.XPATH, "//span[text()='Studios:']/parent::*"))
-    source = get_element_text(driver.find_element(By.XPATH, "//span[text()='Source:']/parent::*"))
+    title = scrape_data(driver.find_element(By.XPATH, "//h1[@class='title-name h1_bold_none']"))
+    type = scrape_data(driver.find_element(By.XPATH, "//span[text()='Type:']/following-sibling::a"))
+    episodes = scrape_data(driver.find_element(By.XPATH, "//span[text()='Episodes:']/parent::*"))
+    status = scrape_data(driver.find_element(By.XPATH, "//span[text()='Status:']/parent::*"))
+    aired = scrape_data(driver.find_element(By.XPATH, "//span[text()='Aired:']/parent::*"))
+    studios = scrape_data(driver.find_element(By.XPATH, "//span[text()='Studios:']/parent::*"))
+    source = scrape_data(driver.find_element(By.XPATH, "//span[text()='Source:']/parent::*"))
     genres = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[text()='Genres:']/parent::*/a"))
     theme = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[text()='Theme:']/parent::*/a"))
     demo = ', '.join(a.text.strip() for a in driver.find_elements(By.XPATH, "//span[text()='Demographic:']/parent::*/a"))
-    duration = get_element_text(driver.find_element(By.XPATH, "//span[text()='Duration:']/parent::*"))
-    rating = get_element_text(driver.find_element(By.XPATH, "//span[text()='Rating:']/parent::*"))
-    score = get_element_text(driver.find_element(By.XPATH, "//span[text()='Score:']/following-sibling::span"))
-    ranked = re.search(r'#(\d+)', get_element_text(driver.find_element(By.XPATH, "//span[text()='Ranked:']/parent::*")))
+    duration = scrape_data(driver.find_element(By.XPATH, "//span[text()='Duration:']/parent::*"))
+    rating = scrape_data(driver.find_element(By.XPATH, "//span[text()='Rating:']/parent::*"))
+    score = scrape_data(driver.find_element(By.XPATH, "//span[text()='Score:']/following-sibling::span"))
+    ranked = re.search(r'#(\d+)', scrape_data(driver.find_element(By.XPATH, "//span[text()='Ranked:']/parent::*")))
     ranked = ranked.group(1)[:-2] if ranked else ''
-    popularity = re.search(r'#(\d+)', get_element_text(driver.find_element(By.XPATH, "//span[text()='Popularity:']/parent::*")))
+    popularity = re.search(r'#(\d+)', scrape_data(driver.find_element(By.XPATH, "//span[text()='Popularity:']/parent::*")))
     popularity = popularity.group(1) if popularity else ''
-    members = get_element_text(driver.find_element(By.XPATH, "//span[text()='Members:']/parent::*"))
-    fav = get_element_text(driver.find_element(By.XPATH, "//span[text()='Favorites:']/parent::*"))
+    members = scrape_data(driver.find_element(By.XPATH, "//span[text()='Members:']/parent::*"))
+    fav = scrape_data(driver.find_element(By.XPATH, "//span[text()='Favorites:']/parent::*"))
 
 
     anime = {'title': title, 'type': type, 'episodes': episodes, 'status': status, 'aired': aired, 'studios': studios,
