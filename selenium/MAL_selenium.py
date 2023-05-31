@@ -62,14 +62,14 @@ d = pd.DataFrame(
      'fav': []})
 
 def scrape_data(element):
-    time.sleep(0.4)
+    time.sleep(1)
     return element.text.strip() if element else ''
 
 for link in anime_links:
     url = quote(link, safe=':/')
     driver.get(url)
 
-    time.sleep(0.4) # adjust the waiting time accordingly
+    time.sleep(1) # adjust the waiting time accordingly
 
     title = scrape_data(driver.find_element(By.XPATH, "//h1[@class='title-name h1_bold_none']"))
     type = scrape_data(driver.find_element(By.XPATH, "//span[text()='Type:']/following-sibling::a"))
