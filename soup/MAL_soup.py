@@ -7,6 +7,7 @@ from urllib.parse import quote
 from bs4 import BeautifulSoup as BS
 import re
 import pandas as pd
+import time
 
 ################################################################################
 # This part prepares links to current top anime
@@ -16,11 +17,17 @@ base_url = 'https://myanimelist.net/'
 html = request.urlopen(base_url)
 bs = BS(html.read(), 'html.parser')
 
+# Pick Top Anime page
+
 top_url = bs.find('div', {'class': 'footer-ranking'}).div.div.h3.a['href']
 html = request.urlopen(top_url)
 bs = BS(html.read(), 'html.parser')
 
+# Define links list
+
 anime_links = []
+
+# Scrap links using a certain class in the html code
 
 def scrape_links(url):
     html = request.urlopen(url)
@@ -31,8 +38,13 @@ def scrape_links(url):
 
 anime_links.extend(scrape_links(top_url))
 
-# Manual limit - increments of 50 are checked
-link_limit = 100
+# Manual limit - increments of 50 are most easily checked
+if True:
+    link_limit = 100
+else:
+    link_limit = 200
+
+# Loop finding the next page, iterating to the next page if the button is found and breaking if its not found. Only applies when link limit is higher than current lenght of the link list
 
 while len(anime_links) < link_limit:
     next_page_link = None
@@ -45,18 +57,23 @@ while len(anime_links) < link_limit:
     html = request.urlopen(next_page_link)
     bs = BS(html.read(), 'html.parser')
 
-#for link in anime_links:
-#    print(link)
+for link in anime_links:
+    print(link)
 
 ################################################################################
 # This part scraps anime data
 ################################################################################
 
 d = pd.DataFrame({'title':[], 'type':[], 'episodes':[], 'status':[], 'aired':[], 'studios':[], 'source':[], 'genres':[], 'theme':[], 'demo':[], 'duration':[], 'rating':[], 'score':[], 'ranked':[], 'popularity':[], 'members':[], 'fav':[]})
+
+# Loop designated for extracting appropriate data from each anime page
+
 for link in anime_links:
     url = quote(link, safe=':/')
     html=request.urlopen(url)
     bs1=BS(html.read(), 'html.parser')
+
+    time.sleep(3) # delay added as a precaution
     
     title = bs1.find('h1', {'class':'title-name h1_bold_none'}).get_text(strip=True)
     try:
@@ -132,5 +149,5 @@ for link in anime_links:
     anime = {'title':title, 'type':type, 'episodes':episodes, 'status':status, 'aired':aired, 'studios':studios, 'source':source, 'genres':genres, 'theme':theme, 'demo':demo, 'duration':duration, 'rating':rating, 'score':score, 'ranked':ranked, 'popularity':popularity, 'members':members, 'fav':fav}
     d = pd.concat([d, pd.DataFrame(anime, index=[0])], ignore_index=True)
 
-#print(d)
+print(d)
 d.to_csv('anime_BS.csv')

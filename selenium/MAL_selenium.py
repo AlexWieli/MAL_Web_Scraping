@@ -25,10 +25,14 @@ driver = webdriver.Firefox(service=Service(geckodriver_path), options=options)
 base_url = 'https://myanimelist.net/'
 driver.get(base_url)
 
+# Navigate to Top Anime URL
+
 top_url = driver.find_element(By.CLASS_NAME, 'footer-ranking').find_element(By.TAG_NAME, 'a').get_attribute('href')
 driver.get(top_url)
 
 anime_links = []
+
+# Setup a function extracting link to each anime
 
 def scrape_links(url):
     driver.get(url)
@@ -38,8 +42,13 @@ def scrape_links(url):
 
 anime_links.extend(scrape_links(top_url))
 
-# Manual limit - increments of 50 are checked
-link_limit = 50
+# Manual limit - increments of 50 are most easily checked
+if True:
+    link_limit = 100
+else:
+    link_limit = 200
+
+# Loop navigating to the next page, if the amount of links are lower than the lenght of the list. If the button is not found, the loop stops.
 
 while len(anime_links) < link_limit:
     next_button = driver.find_element(By.CLASS_NAME, 'link-blue-box.next')
@@ -61,15 +70,19 @@ d = pd.DataFrame(
      'theme': [], 'demo': [], 'duration': [], 'rating': [], 'score': [], 'ranked': [], 'popularity': [], 'members': [],
      'fav': []})
 
+# Scraping function with a time delay
+
 def scrape_data(element):
-    time.sleep(1)
+    #time.sleep(1)
     return element.text.strip() if element else ''
+
+# Loop extracting the appropriate data
 
 for link in anime_links:
     url = quote(link, safe=':/')
     driver.get(url)
 
-    time.sleep(1) # adjust the waiting time accordingly
+    time.sleep(20) # adjust the waiting time accordingly
 
     title = scrape_data(driver.find_element(By.XPATH, "//h1[@class='title-name h1_bold_none']"))
     type = scrape_data(driver.find_element(By.XPATH, "//span[text()='Type:']/following-sibling::a"))
@@ -104,6 +117,12 @@ for link in anime_links:
              'source': source, 'genres': genres, 'theme': themes, 'demo': demo, 'duration': duration, 'rating': rating,
              'score': score, 'ranked': ranked, 'popularity': popularity, 'members': members, 'fav': fav}
     d = pd.concat([d, pd.DataFrame(anime, index=[0])], ignore_index=True)
+    
+    # Manual limit to a few records
+    if len(d) > 5:
+        break
+    else: 
+        continue
 
 driver.quit()
 
