@@ -5,7 +5,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.support import expected_conditions as EC
 import time
 
 # Configure Firefox options
@@ -21,6 +20,8 @@ driver = webdriver.Firefox(service=Service(geckodriver_path), options=options)
 ################################################################################
 # This part prepares links to current top anime
 ################################################################################
+
+Start = time.time()
 
 base_url = 'https://myanimelist.net/'
 driver.get(base_url)
@@ -82,7 +83,9 @@ for link in anime_links:
     url = quote(link, safe=':/')
     driver.get(url)
 
-    time.sleep(20) # adjust the waiting time accordingly
+    # Adjust the waiting time accordingly. Selenium unfortunately overloads MAL very quickly, so for bigger samples it is not optimal.
+    
+    time.sleep(30) 
 
     title = scrape_data(driver.find_element(By.XPATH, "//h1[@class='title-name h1_bold_none']"))
     type = scrape_data(driver.find_element(By.XPATH, "//span[text()='Type:']/following-sibling::a"))
@@ -105,7 +108,7 @@ for link in anime_links:
     rating = rating.replace('Rating: ', '')
     score = scrape_data(driver.find_element(By.XPATH, "//span[text()='Score:']/following-sibling::span"))
     ranked = re.search(r'#(\d+)', scrape_data(driver.find_element(By.XPATH, "//span[text()='Ranked:']/parent::*")))
-    ranked = ranked.group(1)[:-2] if ranked else ''
+    ranked = ranked.group(1)[:-1] if ranked else ''
     popularity = re.search(r'#(\d+)', scrape_data(driver.find_element(By.XPATH, "//span[text()='Popularity:']/parent::*")))
     popularity = popularity.group(1) if popularity else ''
     members = scrape_data(driver.find_element(By.XPATH, "//span[text()='Members:']/parent::*"))
@@ -113,18 +116,24 @@ for link in anime_links:
     fav = scrape_data(driver.find_element(By.XPATH, "//span[text()='Favorites:']/parent::*"))
     fav = fav.replace('Favorites: ', '')
 
+
     anime = {'title': title, 'type': type, 'episodes': episodes, 'status': status, 'aired': aired, 'studios': studios,
              'source': source, 'genres': genres, 'theme': themes, 'demo': demo, 'duration': duration, 'rating': rating,
              'score': score, 'ranked': ranked, 'popularity': popularity, 'members': members, 'fav': fav}
     d = pd.concat([d, pd.DataFrame(anime, index=[0])], ignore_index=True)
     
-    # Manual limit to a few records
-    if len(d) > 5:
-        break
-    else: 
-        continue
+    #Manual limit to a few records
+    #if len(d) > 4:
+    #    break
+    #else: 
+    #    continue
 
 driver.quit()
 
+End = time.time()
+
 print(d)
+
+print('Scraper speed: ', round(End - Start, 2)/60, " minutes.")
+
 d.to_csv('anime_Selenium.csv')

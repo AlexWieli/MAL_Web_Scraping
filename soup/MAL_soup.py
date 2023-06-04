@@ -13,6 +13,8 @@ import time
 # This part prepares links to current top anime
 ################################################################################
 
+Start = time.time()
+
 base_url = 'https://myanimelist.net/'
 html = request.urlopen(base_url)
 bs = BS(html.read(), 'html.parser')
@@ -73,7 +75,7 @@ for link in anime_links:
     html=request.urlopen(url)
     bs1=BS(html.read(), 'html.parser')
 
-    time.sleep(3) # delay added as a precaution
+    #time.sleep(2) # delay added as a precaution
     
     title = bs1.find('h1', {'class':'title-name h1_bold_none'}).get_text(strip=True)
     try:
@@ -149,5 +151,10 @@ for link in anime_links:
     anime = {'title':title, 'type':type, 'episodes':episodes, 'status':status, 'aired':aired, 'studios':studios, 'source':source, 'genres':genres, 'theme':theme, 'demo':demo, 'duration':duration, 'rating':rating, 'score':score, 'ranked':ranked, 'popularity':popularity, 'members':members, 'fav':fav}
     d = pd.concat([d, pd.DataFrame(anime, index=[0])], ignore_index=True)
 
+End = time.time()
+
 print(d)
+
+print('Scraper speed: ', round(End - Start, 2)/60, " minutes.")
+
 d.to_csv('anime_BS.csv')
