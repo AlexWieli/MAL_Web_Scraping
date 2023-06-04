@@ -1,8 +1,13 @@
+################################################################################
+# Scraping Project - My Anime List | Aleksander Wieliński 420272 & Jakub Gazda 419272
+################################################################################
+
 import scrapy
-import logging
+#import logging
 
 # a class containing the scrapped data
 class AnimeItem(scrapy.Item):
+    # Define fields for the scraped data
     title = scrapy.Field()
     type = scrapy.Field()
     episodes = scrapy.Field()
@@ -26,7 +31,7 @@ class MyAnimeListSpider(scrapy.Spider):
     name = 'scrapy'
     start_urls = ['https://myanimelist.net/']
 
-    # place where we change the limit of the scrapped animes
+    # place where we change the limit of the scrapped animes, keep in mind that it has to be divisible by 50
     if True:
         link_limit=100
     else:
@@ -37,7 +42,7 @@ class MyAnimeListSpider(scrapy.Spider):
         top_url = response.xpath('//div[@class="footer-ranking"]//div//div//h3//a/@href').get()
         yield response.follow(top_url, callback=self.parse_page_links)
 
-    # a function that sends the link to another function of every page with next 50 positions (by chaning the url direcly) given our initial link_limit argument
+    # a function that sends the link to another function of every page with next 50 positions (by changing the url direcly) given our initial link_limit argument
     def parse_page_links(self, response):
         base_url = response.url
         for i in range(int(self.link_limit//50)):
@@ -49,13 +54,13 @@ class MyAnimeListSpider(scrapy.Spider):
         anime_links = response.xpath('//a[@class="hoverinfo_trigger fl-l ml12 mr8"]/@href').getall()
         
         for link in anime_links:
-            logging.info(link)
             yield response.follow(link, callback=self.parse_anime)
 
     # a function where the link to the page with anime's description is scrapped for basic statistics
     def parse_anime(self, response):
         i = AnimeItem()
 
+        # functions to find and scrape the information about particular anime from the website
         i['title'] = response.xpath('//h1[@class="title-name h1_bold_none"]/strong/text()').get().strip()
         i['type'] = response.xpath("//span[text()='Type:']/following-sibling::*/text()").get().strip()
         i['episodes'] = response.xpath("//span[text()='Episodes:']/following-sibling::text()").get().strip()
@@ -64,7 +69,7 @@ class MyAnimeListSpider(scrapy.Spider):
         i['studios'] = response.xpath("//span[text()='Studios:']/following-sibling::*/text()").get().strip()
         i['source'] = response.xpath("//span[text()='Source:']/following-sibling::text()").get().strip()
         i['genres'] = ', '.join(response.css('span:contains("Genre:") ~ a::text, span:contains("Genres:") ~ a::text').getall())
-        i['theme'] = ', '.join(response.css('span:contains("Theme:") ~ a::text, span:contains("Themes:") ~a ::text').getall())
+        i['theme'] = ', '.join(response.css('span:contains("Theme:") ~ a::text, span:contains("Themes:") ~ a ::text').getall())
         i['demo'] = ', '.join(response.css('span:contains("Demographic:") ~ a::text').getall())
         i['duration'] = response.xpath("//span[text()='Duration:']/following-sibling::text()").get().strip()
         i['rating'] = response.xpath("//span[text()='Rating:']/following-sibling::text()").get().strip()
@@ -74,22 +79,5 @@ class MyAnimeListSpider(scrapy.Spider):
         i['members'] = response.xpath("//span[text()='Members:']/following-sibling::text()").get().strip()
         i['fav'] = response.xpath("//span[text()='Favorites:']/following-sibling::text()").get().strip()
 
-        # logging.info(i['title'])
-        # logging.info(i['type'])
-        # logging.info(i['episodes'])
-        # logging.info(i['status'])
-        # logging.info(i['aired'])
-        # logging.info(i['studios'])
-        # logging.info(i['source'])
-        # logging.info(i['genres'])
-        # logging.info(i['theme'])
-        # logging.info(i['demo'])
-        # logging.info(i['duration'])
-        # logging.info(i['rating'])
-        # logging.info(i['score'])
-        # logging.info(i['ranked'])
-        # logging.info(i['popularity'])
-        # logging.info(i['members'])
-        # logging.info(i['fav'])
-
         yield i
+        
