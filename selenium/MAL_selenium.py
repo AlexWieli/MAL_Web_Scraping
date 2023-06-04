@@ -11,8 +11,8 @@ import time
 options = Options()
 options.headless = False  # Headless mode toggle
 
-# Path to Geckodriver executable
-geckodriver_path = '/opt/homebrew/bin/geckodriver'
+# Path to Geckodriver executable - change according to your file location
+geckodriver_path = 'C:/Users/olekw/.vscode/extensions/geckodriver.exe'
 
 # Initialize Firefox driver
 driver = webdriver.Firefox(service=Service(geckodriver_path), options=options)
@@ -84,8 +84,8 @@ for link in anime_links:
     driver.get(url)
 
     # Adjust the waiting time accordingly. Selenium unfortunately overloads MAL very quickly, so for bigger samples it is not optimal.
-    
-    time.sleep(30) 
+
+    time.sleep(5) 
 
     title = scrape_data(driver.find_element(By.XPATH, "//h1[@class='title-name h1_bold_none']"))
     type = scrape_data(driver.find_element(By.XPATH, "//span[text()='Type:']/following-sibling::a"))
@@ -122,11 +122,12 @@ for link in anime_links:
              'score': score, 'ranked': ranked, 'popularity': popularity, 'members': members, 'fav': fav}
     d = pd.concat([d, pd.DataFrame(anime, index=[0])], ignore_index=True)
     
-    #Manual limit to a few records
-    #if len(d) > 4:
-    #    break
-    #else: 
-    #    continue
+    #Manual limit to a few records. This is just a demonstrative sample, to prove that the scraper can work relatively fast and efficiently, but in case of MAL we need to be careful
+
+    if len(d) > 5:
+        break
+    else: 
+        continue
 
 driver.quit()
 
