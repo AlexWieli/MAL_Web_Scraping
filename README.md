@@ -6,7 +6,7 @@ This repository contains 3 scrappers for **MyAnimeList** [link: https://myanimel
 
 ## 1. BeautifulSoup
 
-BeautifulSoup requires no specific preparation to run. You can simply use the code and run it on a python compiler. Please keep in mind that for higher amount of records to be scraped, a higher delay in between pages is necesarry, as the page is prone to be overloaded.
+BeautifulSoup requires no specific preparation to run. You can simply use the code and run it on a python compiler. Please keep in mind that for higher amount of records to be scraped, a higher delay in between pages is necesarry, as the page is prone to overloading.
 
 ## 2. Selenium
 
