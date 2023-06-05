@@ -2,7 +2,7 @@
 
 ## General information
 
-This repository contains 3 scrappers for MyAnimeList [link: https://myanimelist.net/ ] using, BeautifulSoup, Selenium and Scrapy, prepared by Jakub Gazda and Aleksander Wieliński in Python. While using the scrapers, please keep in mind that the page is not suited for heavy load and even tends to fail under intense human use, therefore an implementation of delays in the code is highly recommended for bigger samples. Below you may find a short description of how to run each of the codes in this repository.
+This repository contains 3 scrappers for **MyAnimeList** [link: https://myanimelist.net/ ] using BeautifulSoup, Selenium and Scrapy, prepared by Jakub Gazda and Aleksander Wieliński in Python. While using the scrapers, please keep in mind that the page is not suited for heavy load and even tends to fail under intense human use, therefore an implementation of delays in the code is highly recommended for bigger samples. Below you may find a short description of how to run each of the codes in this repository.
 
 ## 1. BeautifulSoup
 
